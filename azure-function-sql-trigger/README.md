@@ -69,3 +69,11 @@ docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 --name azurite -d mcr.mi
 When moving to production:
 1. Update `SqlConnectionString` in Azure Portal (App Settings) to your real Azure SQL string.
 2. The code will automatically use the Azure SQL database instead of the local Docker container.
+
+## Security Best Practices
+
+- **Never commit credentials**: The `.gitignore` file is configured to exclude `local.settings.json` and `.env` files.
+- **Use environment variables**: All cloud deployment scripts (`setup_cloud_db.py`, `verify_cloud_data.py`) require the `SQL_PASSWORD` environment variable to be set.
+- **Connection pooling**: The `db_manager.py` module implements connection reuse to minimize overhead and improve security.
+- **Parameterized queries**: All SQL queries use parameterized inputs to prevent SQL injection attacks.
+- **Local development passwords**: The hardcoded passwords in local development scripts (e.g., `Strong!Pass123`) are only for Docker containers running locally and should never be used in production.

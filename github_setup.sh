@@ -31,7 +31,7 @@ if ! gh auth status &>/dev/null; then
     echo "Please paste your GitHub Personal Access Token (Classic) below."
     echo "  (Scopes required: 'repo', 'read:org', 'admin:public_key')"
     echo "  Generate here: https://github.com/settings/tokens/new"
-    read -s -p "Token: " GH_TOKEN
+    read -r -s -p "Token: " GH_TOKEN
     echo ""
     
     if [ -z "$GH_TOKEN" ]; then
