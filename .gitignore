@@ -1,2 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Azure Functions
+local.settings.json
+func.log
+func_log.txt
+.python_packages/
+.azurefunctions/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+local_test.db
 .gemini/
 gha-creds-*.json
