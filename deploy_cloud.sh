@@ -28,7 +28,7 @@ fi
 echo ""
 echo "Please enter the SQL Connection String for the CLOUD database."
 echo "Format: Driver={ODBC Driver 18 for SQL Server};Server=tcp:alexbeginner.database.windows.net,1433;Database=alexbeginner;Uid=...;Pwd=...;"
-read -s -p "Connection String: " SQL_CONN_STRING
+read -r -s -p "Connection String: " SQL_CONN_STRING
 echo ""
 if [ -z "$SQL_CONN_STRING" ]; then
     echo "Error: Connection string cannot be empty."

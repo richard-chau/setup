@@ -36,7 +36,7 @@ fi
 echo ""
 echo "Please enter the SQL Connection String for the CLOUD database."
 echo "Format: Driver={ODBC Driver 18 for SQL Server};Server=tcp:alexbeginner.database.windows.net,1433;Database=alexbeginner;Uid=...;Pwd=...;"
-read -s -p "Connection String: " SQL_CONN_STRING
+read -r -s -p "Connection String: " SQL_CONN_STRING
 echo ""
 if [ -z "$SQL_CONN_STRING" ]; then
     echo "Error: Connection string cannot be empty."
@@ -78,10 +78,16 @@ Used to create the SQL Schema (Tables) in the cloud database.
 ```python
 import pyodbc
 import sys
+import os
 
 # Cloud Connection String
-# NOTE: Credentials here are examples. Use Environment Variables in production.
-CONN_STR = "Driver={ODBC Driver 18 for SQL Server};Server=tcp:alexbeginner.database.windows.net,1433;Database=alexbeginner;Uid=CloudSA8c3bcbfd;Pwd=<REDACTED_PASSWORD>;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+# Requires 'SQL_PASSWORD' environment variable
+password = os.environ.get("SQL_PASSWORD")
+if not password:
+    print("Error: SQL_PASSWORD environment variable is not set.")
+    sys.exit(1)
+
+CONN_STR = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:alexbeginner.database.windows.net,1433;Database=alexbeginner;Uid=CloudSA8c3bcbfd;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
 
 def init_cloud_db():
     print("Connecting to Cloud DB 'alexbeginner'...")
@@ -91,7 +97,7 @@ def init_cloud_db():
         
         # Create Table
         print("Checking for 'AccessLogs' table...")
-        cursor.execute(f"""
+        cursor.execute("""
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='AccessLogs' AND xtype='U')
             CREATE TABLE AccessLogs (
                 Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -115,9 +121,16 @@ Used to query the cloud database and verify data persistence.
 
 ```python
 import pyodbc
+import os
+import sys
 
 # Cloud Connection String
-CONN_STR = "Driver={ODBC Driver 18 for SQL Server};Server=tcp:alexbeginner.database.windows.net,1433;Database=alexbeginner;Uid=CloudSA8c3bcbfd;Pwd=<REDACTED_PASSWORD>;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+password = os.environ.get("SQL_PASSWORD")
+if not password:
+    print("Error: SQL_PASSWORD environment variable is not set.")
+    sys.exit(1)
+
+CONN_STR = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:alexbeginner.database.windows.net,1433;Database=alexbeginner;Uid=CloudSA8c3bcbfd;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
 
 try:
     print("Connecting to Cloud DB to verify data...")
