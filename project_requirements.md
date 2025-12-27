@@ -77,3 +77,42 @@ azure-function-sql-trigger/
     -   `verify_sqlite.py`: 验证本地 SQLite 读写。
     -   `verify_blob.py`: 验证 Azurite Blob 存储。
     -   `verify_data.py`: 验证 Docker SQL 数据写入。
+
+## 5. 云端部署 (Completed 2025-12-27)
+
+项目已成功部署至 Azure Cloud，并实现了端到端联调。
+
+### 5.1 云资源清单
+-   **Resource Group**: `beginner`
+-   **Region**: `westus2`
+-   **Function App**: `sql-trigger-64568d` (Python 3.11, Consumption Plan)
+    -   URL: `https://sql-trigger-64568d.azurewebsites.net/api/httptriggertest`
+-   **SQL Server**: `alexbeginner.database.windows.net`
+-   **Database**: `alexbeginner` (Serverless Tier)
+-   **Storage Account**: `beginnerbf9b`
+
+### 5.2 部署过程回顾
+1.  **环境准备**: 安装 Azure CLI (`az`) 并完成登录。
+2.  **数据库配置**:
+    -   重置 SQL Admin 密码。
+    -   配置防火墙规则 `AllowAzureServices` (允许 Function 访问) 和 `DevBox` (允许本地 IP 141.148.150.146 管理)。
+3.  **资源创建**:
+    -   使用 `deploy_cloud.sh` 脚本自动创建了 Function App。
+    -   配置了 App Settings (`SqlConnectionString`)。
+4.  **代码发布**: 使用 `func azure functionapp publish` 上传代码。
+5.  **Schema 初始化**:
+    -   运行 `setup_cloud_db.py` 远程连接云数据库。
+    -   创建了 `AccessLogs` 表。
+6.  **验证**:
+    -   `curl` 请求成功返回 "Hello, FinalCloudSuccess. (DB interaction successful)"。
+    -   确认数据库已写入记录。
+
+### 5.3 常用运维命令
+-   **获取 Function Key**:
+    ```bash
+    az functionapp function keys list --resource-group beginner --name sql-trigger-64568d --function-name HttpTriggerTest --query "default" -o tsv
+    ```
+-   **查看实时日志**:
+    ```bash
+    func azure functionapp logstream sql-trigger-64568d
+    ```
