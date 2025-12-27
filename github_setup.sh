@@ -8,6 +8,17 @@ SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
 
 echo "=== GitHub Auto-Setup with 'gh' ==="
 
+# 0. Install gh CLI if not present
+echo "--> Checking for GitHub CLI..."
+if ! command -v gh &> /dev/null; then
+    echo "GitHub CLI not found. Installing..."
+    sudo apt update
+    sudo apt install gh -y
+    echo "GitHub CLI installed successfully."
+else
+    echo "GitHub CLI is already installed."
+fi
+
 # 1. Git Configuration (Just to be safe/local)
 echo "--> Configuring Git..."
 git config --global user.name "$GITHUB_USER"
