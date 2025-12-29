@@ -25,6 +25,17 @@ npm install -g azure-functions-core-tools@4 azurite
 
 Launch the required infrastructure with these commands:
 
+### Automated Management (Recommended)
+Use the provided helper script in the root directory:
+```bash
+# Start all services
+../manage_local_env.sh start
+
+# Stop services when done
+../manage_local_env.sh stop
+```
+
+### Manual Commands
 ```bash
 # SQL Server (Database)
 docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=Strong!Pass123' -p 1433:1433 --name sql_server -d mcr.microsoft.com/azure-sql-edge

@@ -113,6 +113,38 @@ azure-function-sql-trigger/
     az functionapp function keys list --resource-group beginner --name sql-trigger-64568d --function-name HttpTriggerTest --query "default" -o tsv
     ```
 -   **查看实时日志**:
+        ```bash
+        func azure functionapp logstream sql-trigger-64568d
+        ```
+    
+    ## 6. Developer Guide: Fast-Track Process
+    
+    **核心成果**: 本项目已建立了一套可复用的“Azure Function 工厂”。未来开发新功能的时间可缩短至 15 分钟以内。
+    
+    ### 6.1 复用资产 (不要重复造轮子)
+    -   **基础设施**: 本地 Docker (SQL & Azurite) 可长期运行，供所有项目共享。
+    -   **核心代码**: `Shared/db_manager.py` 封装了连接池和重试逻辑，**直接复制**到新项目即可。
+    -   **部署脚本**: `deploy_cloud.sh` 只需修改 `FUNCTION_APP_NAME` 即可用于部署新应用。
+    
+    ### 6.2 新功能开发流程 (15分钟)
+    
+    **Step A: 本地开发 (10分钟)**
+    1.  **创建**: `func new --name MyNewCalc --template "HTTP trigger"`
+    2.  **连接**: 在代码中 `import Shared.db_manager`。
+    3.  **运行**: `func start` (自动连接本地 Docker SQL)。
+    
+    **Step B: 云端部署 (5分钟)**
+    1.  **建表**: 参考 `setup_cloud_db.py` 在云端创建业务表。
+    2.  **部署**:
+        -   *复用 App*: `func azure functionapp publish sql-trigger-64568d`
+        -   *新 App*: 修改 `deploy_cloud.sh` 并运行。
+    
+    ### 6.3 本地环境管理
+    新增脚本 `manage_local_env.sh` 用于快速控制本地服务：
     ```bash
-    func azure functionapp logstream sql-trigger-64568d
+    chmod +x manage_local_env.sh
+    ./manage_local_env.sh start   # 启动 SQL/Azurite
+    ./manage_local_env.sh stop    # 暂停服务 (释放内存)
+    ./manage_local_env.sh clean   # 删除容器和数据 (重置环境)
     ```
+    

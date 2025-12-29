@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # 1. Google Cloud Storage Emulator
+  gcs-emulator:
+    image: fsouza/fake-gcs-server
+    command: -scheme http
+    ports:
+      - "4443:4443"
+    volumes:
+      - ./data/storage:/data
+
+  # 2. Firestore Emulator
+  firestore-emulator:
+    image: google/cloud-sdk:slim
+    command: gcloud beta emulators firestore start --host-port=0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    environment:
+      - FIRESTORE_PROJECT_ID=local-test-project
+
+  # 3. Local Cloud Run App (The "Function")
+  app:
+    build: .
+    ports:
+      - "8000:8080"  # Expose Flask on port 8000
+    environment:
+      - PORT=8080
+      - STORAGE_EMULATOR_HOST=http://gcs-emulator:4443
+      - FIRESTORE_EMULATOR_HOST=firestore-emulator:8080
+      - GCLOUD_PROJECT=n8n-server-482107
+      - FLASK_ENV=development
+    depends_on:
+      - gcs-emulator
+      - firestore-emulator
+    volumes:
+      - ./:/app

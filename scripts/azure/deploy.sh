@@ -60,7 +60,14 @@ az functionapp config appsettings set \
 
 # 5. Publish Code
 echo "--> Publishing Code..."
-cd azure-function-sql-trigger
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# Assuming script is in scripts/azure/, project root is ../../
+PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+cd "$PROJECT_ROOT/azure-function-sql-trigger" || { echo "Error: Project directory not found!"; exit 1; }
+
 # Remove local venv from upload if it exists (func publish handles this usually, but good to be safe)
 func azure functionapp publish "$FUNCTION_APP_NAME"
 
